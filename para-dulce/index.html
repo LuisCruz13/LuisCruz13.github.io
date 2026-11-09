@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Para Dulce</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Young+Serif&display=swap">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; }
+  :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  /* Layout: una sola escena de atardecer en la laguna (canvas) y debajo la nota escrita a mano. Look único, nocturno. */
+  :root {
+    --sky: #1d0f2c;
+    --plum: #3a1a4a;
+    --rose: #e0405a;
+    --blush: #f6b8c6;
+    --ink: #fbeef2;
+    --muted: #cfa9bd;
+    --paper: #fff6f1;
+    --paper-ink: #3b1f33;
+    --font-display: "Young Serif", Georgia, "Times New Roman", serif;
+    --font-hand: "Caveat", "Segoe Print", "Bradley Hand", cursive;
+    color-scheme: dark;
+  }
+  html, body { background: var(--sky); }
+  body {
+    color: var(--ink);
+    font-family: var(--font-display);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 20px 48px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+  header { display: flex; flex-direction: column; gap: 6px; text-align: center; }
+  .eyebrow {
+    font-family: var(--font-hand); font-size: 1.35rem; color: var(--blush);
+    letter-spacing: 0.02em;
+  }
+  h1 {
+    margin: 0; font-weight: 400; font-size: clamp(2.2rem, 7vw, 3.4rem);
+    line-height: 1.05; text-wrap: balance; color: var(--ink);
+  }
+  .scene {
+    position: relative; width: 100%; max-width: 100%;
+    aspect-ratio: 4 / 5; max-height: 78vh;
+    border-radius: 22px; overflow: hidden;
+    background: var(--plum);
+    box-shadow: 0 30px 80px -30px rgba(224, 64, 90, 0.45);
+  }
+  @media (min-width: 640px) { .scene { aspect-ratio: 5 / 4; } }
+  canvas { display: block; width: 100%; height: 100%; cursor: pointer; touch-action: manipulation; }
+  .hint {
+    position: absolute; left: 50%; transform: translateX(-50%);
+    bottom: 12px; margin: 0;
+    font-family: var(--font-hand); font-size: 1.15rem; color: var(--ink);
+    opacity: 0.8; pointer-events: none; white-space: nowrap;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+  }
+  .note {
+    background: var(--paper); color: var(--paper-ink);
+    border-radius: 6px 18px 8px 16px;
+    padding: 28px clamp(20px, 5vw, 40px) 30px;
+    transform: rotate(-0.6deg);
+    box-shadow: 0 18px 40px -18px rgba(0,0,0,0.6);
+    display: flex; flex-direction: column; gap: 12px;
+    animation: rise 900ms ease-out both;
+  }
+  .note p {
+    margin: 0; font-family: var(--font-hand); font-weight: 500;
+    font-size: clamp(1.35rem, 4.4vw, 1.6rem); line-height: 1.32;
+    max-width: 34ch;
+  }
+  .note .greet { font-weight: 700; font-size: clamp(1.6rem, 5vw, 1.9rem); }
+  .note .ask { color: var(--rose); font-weight: 700; }
+  .note .sign { align-self: flex-end; font-weight: 700; font-size: 1.7rem; }
+  .actions { display: flex; justify-content: center; }
+  button {
+    font-family: var(--font-hand); font-size: 1.3rem; font-weight: 700;
+    color: var(--sky); background: var(--blush);
+    border: 0; border-radius: 999px; padding: 8px 22px; cursor: pointer;
+  }
+  button:hover { background: var(--ink); }
+  button:focus-visible { outline: 3px solid var(--rose); outline-offset: 3px; }
+  @keyframes rise { from { transform: translateY(10px) rotate(-0.6deg); } to { transform: translateY(0) rotate(-0.6deg); } }
+  @media (prefers-reduced-motion: reduce) { .note { animation: none; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">6 años de conocernos · noviembre 2026</span>
+    <h1>Para Dulce</h1>
+  </header>
+
+  <div class="scene">
+    <canvas id="scene" aria-label="Atardecer en la laguna con un ramo de rosas rojas y una flor blanca que florece, y un gatito negro con moño rosa."></canvas>
+    <p class="hint">toca la pantalla ✿</p>
+  </div>
+
+  <div class="actions"><button id="replay" type="button">Ver florecer otra vez</button></div>
+
+  <article class="note">
+    <p class="greet">Dulce:</p>
+    <p>Te hice este ramo porque las flores de verdad se marchitan y este no.</p>
+    <p>Rosas rojas con una flor blanca en medio, como me dijiste que te gustan, y el papel bonito, sin tantos picos.</p>
+    <p>En estos años me enseñaste que el mejor plan puede ser un picnic en la laguna, un frappé de caramelo o quedarnos platicando hasta las 2 de la mañana.</p>
+    <p>Gracias por ponerle nombre a Puffy, por guardar cada cosita que te doy y por reírte conmigo de las mismas tonterías.</p>
+    <p>Eres la persona más bonita que conozco, por dentro y por fuera.</p>
+    <p class="ask">¿Hamburguesita el domingo? Yo invito.</p>
+    <p class="sign">Tqm,<br>Luis</p>
+  </article>
+</div>
+
+<script>
+(() => {
+  const canvas = document.getElementById("scene");
+  const ctx = canvas.getContext("2d");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let W = 0, H = 0, dpr = 1, t0 = performance.now(), stars = [], flies = [], petals = [], shooting = null;
+
+  const rand = (a, b) => a + Math.random() * (b - a);
+  const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+  const easeOutBack = x => { const c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+
+  function resize() {
+    const r = canvas.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = r.width; H = r.height;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    stars = Array.from({ length: Math.round(W * H / 2600) }, () => ({
+      x: Math.random() * W, y: Math.random() * H * 0.5, r: rand(0.4, 1.5),
+      s: rand(0.6, 2.2), p: Math.random() * 6.28
+    }));
+    flies = Array.from({ length: 22 }, () => ({
+      x: Math.random() * W, y: rand(H * 0.55, H * 0.95), p: Math.random() * 6.28, s: rand(0.3, 0.9)
+    }));
+    if (reduce) draw(99);
+  }
+
+  /* ---------- escenario ---------- */
+  function sky(t) {
+    const hz = H * 0.6;
+    const g = ctx.createLinearGradient(0, 0, 0, hz);
+    g.addColorStop(0, "#1d0f2c");
+    g.addColorStop(0.45, "#5a2560");
+    g.addColorStop(0.78, "#d9607a");
+    g.addColorStop(1, "#ffb98a");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, hz);
+
+    for (const s of stars) {
+      const fade = 1 - s.y / (H * 0.5);
+      const a = fade * (0.35 + 0.65 * (0.5 + 0.5 * Math.sin(t * s.s + s.p)));
+      ctx.fillStyle = `rgba(255,240,250,${a.toFixed(3)})`;
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.283); ctx.fill();
+    }
+
+    // estrella fugaz
+    if (!reduce) {
+      if (!shooting && Math.random() < 0.004) shooting = { x: rand(W * 0.2, W), y: rand(0, H * 0.2), life: 0 };
+      if (shooting) {
+        shooting.life += 0.016;
+        const L = shooting.life, x = shooting.x - L * W * 0.6, y = shooting.y + L * H * 0.25;
+        const gr = ctx.createLinearGradient(x, y, x + 60, y - 25);
+        gr.addColorStop(0, "rgba(255,255,255,0.9)"); gr.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.strokeStyle = gr; ctx.lineWidth = 1.6;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 60, y - 25); ctx.stroke();
+        if (L > 0.8) shooting = null;
+      }
+    }
+
+    // sol
+    const sx = W * 0.3, sr = Math.min(W, H) * 0.09;
+    const glow = ctx.createRadialGradient(sx, hz, 0, sx, hz, sr * 4);
+    glow.addColorStop(0, "rgba(255,214,160,0.8)"); glow.addColorStop(1, "rgba(255,214,160,0)");
+    ctx.fillStyle = glow; ctx.fillRect(0, hz - sr * 4, W, sr * 4);
+    ctx.fillStyle = "#ffe0b0";
+    ctx.beginPath(); ctx.arc(sx, hz, sr, Math.PI, 0); ctx.fill();
+
+    // orilla lejana con la palapa del picnic
+    ctx.fillStyle = "#2b1433";
+    ctx.beginPath(); ctx.moveTo(0, hz);
+    for (let x = 0; x <= W; x += W / 24) ctx.lineTo(x, hz - 4 - 5 * Math.sin(x * 0.03) - (x > W * 0.6 ? 6 : 0));
+    ctx.lineTo(W, hz); ctx.closePath(); ctx.fill();
+    const px = W * 0.78, py = hz - 10, pw = Math.min(W, H) * 0.06;
+    ctx.beginPath(); ctx.moveTo(px - pw, py); ctx.lineTo(px, py - pw * 0.7); ctx.lineTo(px + pw, py); ctx.closePath(); ctx.fill();
+    ctx.fillRect(px - pw * 0.75, py, 2, pw * 0.45); ctx.fillRect(px + pw * 0.75 - 2, py, 2, pw * 0.45);
+  }
+
+  function water(t) {
+    const hz = H * 0.6;
+    const g = ctx.createLinearGradient(0, hz, 0, H);
+    g.addColorStop(0, "#8a3b6a"); g.addColorStop(0.35, "#4a1f50"); g.addColorStop(1, "#1d0f2c");
+    ctx.fillStyle = g; ctx.fillRect(0, hz, W, H - hz);
+    // reflejo del sol
+    const sx = W * 0.3;
+    for (let i = 0; i < 16; i++) {
+      const y = hz + 6 + i * (H - hz) / 22;
+      const w = (30 - i * 1.4) * (0.7 + 0.3 * Math.sin(t * 1.4 + i));
+      ctx.fillStyle = `rgba(255,206,160,${(0.55 - i * 0.03).toFixed(3)})`;
+      ctx.fillRect(sx - w + 6 * Math.sin(t + i), y, w * 2, 2);
+    }
+    // destellos
+    ctx.fillStyle = "rgba(255,230,240,0.25)";
+    for (let i = 0; i < 26; i++) {
+      const x = (i * 97 + t * 14) % W, y = hz + 10 + ((i * 53) % Math.max(1, (H - hz - 20)));
+      ctx.fillRect(x, y, 10 + (i % 4) * 4, 1.2);
+    }
+  }
+
+  function grass() {
+    const y0 = H * 0.86;
+    ctx.fillStyle = "#170a1f";
+    ctx.beginPath(); ctx.moveTo(0, H);
+    ctx.lineTo(0, y0 + 8);
+    ctx.quadraticCurveTo(W * 0.25, y0 - 6, W * 0.5, y0 + 6);
+    ctx.quadraticCurveTo(W * 0.75, y0 + 14, W, y0);
+    ctx.lineTo(W, H); ctx.closePath(); ctx.fill();
+  }
+
+  function cat(t) {
+    const s = Math.min(W, H) * 0.0016;
+    const x = W * 0.14, y = H * 0.885;
+    ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+    ctx.fillStyle = "#0e0612";
+    // cola
+    const sway = reduce ? 0 : Math.sin(t * 1.6) * 18;
+    ctx.lineWidth = 11; ctx.lineCap = "round"; ctx.strokeStyle = "#0e0612";
+    ctx.beginPath(); ctx.moveTo(30, -8); ctx.bezierCurveTo(70, -10, 72 + sway, -60, 50 + sway, -80); ctx.stroke();
+    // cuerpo
+    ctx.beginPath(); ctx.ellipse(0, -30, 34, 38, 0, 0, 6.283); ctx.fill();
+    // cabeza
+    ctx.beginPath(); ctx.arc(-4, -84, 26, 0, 6.283); ctx.fill();
+    // orejas
+    ctx.beginPath(); ctx.moveTo(-26, -96); ctx.lineTo(-22, -126); ctx.lineTo(-6, -106); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(18, -98); ctx.lineTo(14, -128); ctx.lineTo(0, -108); ctx.closePath(); ctx.fill();
+    // ojos que parpadean
+    const blink = reduce ? 1 : (Math.sin(t * 0.9) > 0.97 ? 0.15 : 1);
+    ctx.fillStyle = "#ffd36b";
+    ctx.beginPath(); ctx.ellipse(-14, -86, 4, 5 * blink, 0, 0, 6.283); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(6, -86, 4, 5 * blink, 0, 0, 6.283); ctx.fill();
+    // moño rosa
+    ctx.fillStyle = "#f58bb0";
+    ctx.beginPath(); ctx.moveTo(-4, -60); ctx.lineTo(-22, -70); ctx.lineTo(-22, -50); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(-4, -60); ctx.lineTo(14, -70); ctx.lineTo(14, -50); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.arc(-4, -60, 5, 0, 6.283); ctx.fill();
+    ctx.restore();
+  }
+
+  function fireflies(t) {
+    for (const f of flies) {
+      const x = f.x + Math.sin(t * f.s + f.p) * 22, y = f.y + Math.cos(t * f.s * 0.8 + f.p) * 14;
+      const a = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(t * 2 * f.s + f.p));
+      const g = ctx.createRadialGradient(x, y, 0, x, y, 9);
+      g.addColorStop(0, `rgba(255,236,150,${a.toFixed(3)})`); g.addColorStop(1, "rgba(255,236,150,0)");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 9, 0, 6.283); ctx.fill();
+    }
+  }
+
+  /* ---------- ramo ---------- */
+  function rose(x, y, r, k) {
+    if (r <= 0.5) return;
+    ctx.save(); ctx.translate(x, y);
+    const shades = ["#7d0f24", "#a6182f", "#c8233c", "#e0405a"];
+    for (let layer = 0; layer < 4; layer++) {
+      const n = 5 + layer, rr = r * (1 - layer * 0.22);
+      ctx.fillStyle = shades[layer];
+      for (let i = 0; i < n; i++) {
+        const a = i / n * 6.283 + layer * 0.5 + k;
+        ctx.beginPath();
+        ctx.ellipse(Math.cos(a) * rr * 0.38, Math.sin(a) * rr * 0.38, rr * 0.55, rr * 0.42, a, 0, 6.283);
+        ctx.fill();
+      }
+    }
+    ctx.strokeStyle = "rgba(70,5,20,0.7)"; ctx.lineWidth = Math.max(1, r * 0.06);
+    ctx.beginPath();
+    for (let a = 0; a < 9.5; a += 0.2) {
+      const rad = r * 0.04 * a;
+      const px = Math.cos(a + k) * rad, py = Math.sin(a + k) * rad;
+      a === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function whiteFlower(x, y, r, t) {
+    if (r <= 0.5) return;
+    ctx.save(); ctx.translate(x, y); ctx.rotate(Math.sin(t * 0.7) * 0.05);
+    for (let i = 0; i < 5; i++) {
+      const a = i / 5 * 6.283 - Math.PI / 2;
+      ctx.save(); ctx.rotate(a);
+      const g = ctx.createLinearGradient(0, 0, r * 1.1, 0);
+      g.addColorStop(0, "#ffd6e2"); g.addColorStop(0.35, "#ffffff"); g.addColorStop(1, "#fff4f7");
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.ellipse(r * 0.55, 0, r * 0.6, r * 0.28, 0, 0, 6.283); ctx.fill();
+      ctx.restore();
+    }
+    ctx.fillStyle = "#ffcf5a";
+    for (let i = 0; i < 6; i++) {
+      const a = i / 6 * 6.283;
+      ctx.beginPath(); ctx.arc(Math.cos(a) * r * 0.16, Math.sin(a) * r * 0.16, Math.max(1, r * 0.06), 0, 6.283); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function leaf(x, y, len, ang) {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(ang);
+    ctx.fillStyle = "#2f6b3e";
+    ctx.beginPath(); ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(len * 0.5, -len * 0.35, len, 0);
+    ctx.quadraticCurveTo(len * 0.5, len * 0.35, 0, 0); ctx.fill();
+    ctx.restore();
+  }
+
+  function bouquet(t) {
+    const S = Math.min(W * 0.95, H * 0.9);
+    const cx = W * 0.56, base = H * 0.97, neck = base - S * 0.3, top = neck - S * 0.12;
+    const grow = clamp(t / 1.4);
+    const flowers = [
+      [-0.17, -0.06], [0.17, -0.06], [-0.1, -0.2], [0.1, -0.2], [-0.24, 0.06], [0.24, 0.06], [0, -0.1]
+    ].map(([dx, dy], i) => ({ x: cx + dx * S, y: top + dy * S, d: i * 0.25 }));
+    const white = { x: cx, y: top - 0.27 * S };
+
+    // papel trasero
+    ctx.fillStyle = "#f6b8c6";
+    ctx.beginPath();
+    ctx.moveTo(cx - S * 0.3, top + S * 0.02);
+    ctx.quadraticCurveTo(cx, top - S * 0.1, cx + S * 0.3, top + S * 0.02);
+    ctx.lineTo(cx + S * 0.05, base); ctx.lineTo(cx - S * 0.05, base); ctx.closePath(); ctx.fill();
+
+    // tallos
+    ctx.strokeStyle = "#3d7a46"; ctx.lineWidth = Math.max(2, S * 0.008); ctx.lineCap = "round";
+    for (const f of [...flowers, white]) {
+      ctx.beginPath(); ctx.moveTo(cx, neck);
+      ctx.lineTo(cx + (f.x - cx) * grow, neck + (f.y - neck) * grow); ctx.stroke();
+    }
+    if (grow > 0.6) {
+      const lg = (grow - 0.6) / 0.4;
+      leaf(cx - S * 0.05, top + S * 0.05, S * 0.16 * lg, Math.PI * 1.15);
+      leaf(cx + S * 0.05, top + S * 0.04, S * 0.16 * lg, -Math.PI * 0.15);
+      leaf(cx - S * 0.02, top - S * 0.12, S * 0.12 * lg, Math.PI * 1.35);
+    }
+
+    // nube de flores blancas pequeñas
+    if (grow >= 1) {
+      const a = clamp((t - 1.4) / 1.5);
+      ctx.fillStyle = `rgba(255,255,255,${(0.85 * a).toFixed(3)})`;
+      for (let i = 0; i < 40; i++) {
+        const ang = i * 2.399, rad = S * (0.13 + (i % 7) * 0.025);
+        const x = cx + Math.cos(ang) * rad, y = top - S * 0.08 + Math.sin(ang) * rad * 0.7;
+        ctx.beginPath(); ctx.arc(x, y, Math.max(1, S * 0.006), 0, 6.283); ctx.fill();
+      }
+    }
+
+    // rosas
+    for (const f of flowers) {
+      const p = clamp((t - 1.3 - f.d) / 1.4);
+      rose(f.x, f.y, S * 0.075 * (p > 0 ? easeOutBack(p) : 0), f.d * 3);
+    }
+    const pw = clamp((t - 3.2) / 1.6);
+    whiteFlower(white.x, white.y, S * 0.085 * (pw > 0 ? easeOutBack(pw) : 0), t);
+
+    // papel delantero, liso
+    const g = ctx.createLinearGradient(cx - S * 0.2, 0, cx + S * 0.2, 0);
+    g.addColorStop(0, "#e88aa2"); g.addColorStop(0.5, "#ffc9d6"); g.addColorStop(1, "#e88aa2");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(cx - S * 0.2, top + S * 0.12);
+    ctx.quadraticCurveTo(cx, top + S * 0.2, cx + S * 0.2, top + S * 0.12);
+    ctx.lineTo(cx + S * 0.045, base); ctx.lineTo(cx - S * 0.045, base); ctx.closePath(); ctx.fill();
+
+    // moño
+    ctx.fillStyle = "#ffffff";
+    const by = neck + S * 0.05;
+    ctx.beginPath(); ctx.ellipse(cx - S * 0.04, by, S * 0.045, S * 0.022, -0.4, 0, 6.283); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx + S * 0.04, by, S * 0.045, S * 0.022, 0.4, 0, 6.283); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx, by, S * 0.016, 0, 6.283); ctx.fill();
+    ctx.fillRect(cx - S * 0.03, by, S * 0.008, S * 0.07);
+    ctx.fillRect(cx + S * 0.022, by, S * 0.008, S * 0.06);
+  }
+
+  function fallingPetals() {
+    for (const p of petals) {
+      p.vy += 0.02; p.x += p.vx + Math.sin(p.y * 0.05) * 0.4; p.y += p.vy; p.a += p.va; p.life -= 0.008;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a);
+      ctx.fillStyle = p.c.replace("A", Math.max(0, p.life).toFixed(3));
+      ctx.beginPath(); ctx.ellipse(0, 0, p.r, p.r * 0.55, 0, 0, 6.283); ctx.fill();
+      ctx.restore();
+    }
+    petals = petals.filter(p => p.life > 0 && p.y < H + 20);
+  }
+
+  function draw(t) {
+    ctx.clearRect(0, 0, W, H);
+    sky(t); water(t); fireflies(t); grass(); cat(t); bouquet(t); fallingPetals();
+  }
+
+  function loop(now) {
+    draw((now - t0) / 1000);
+    requestAnimationFrame(loop);
+  }
+
+  canvas.addEventListener("pointerdown", e => {
+    const r = canvas.getBoundingClientRect();
+    const x = e.clientX - r.left, y = e.clientY - r.top;
+    const colors = ["rgba(200,35,60,A)", "rgba(255,255,255,A)", "rgba(246,184,198,A)"];
+    for (let i = 0; i < 16; i++) {
+      petals.push({ x, y, vx: rand(-2, 2), vy: rand(-3, -0.5), a: rand(0, 6), va: rand(-0.1, 0.1),
+        r: rand(4, 8), life: 1, c: colors[i % 3] });
+    }
+    if (reduce) { draw(99); }
+  });
+
+  document.getElementById("replay").addEventListener("click", () => {
+    t0 = performance.now(); petals = [];
+    if (reduce) draw(99);
+  });
+
+  new ResizeObserver(resize).observe(canvas);
+  resize();
+  if (!reduce) requestAnimationFrame(loop); else draw(99);
+})();
+</script>
+</body>
+</html>
